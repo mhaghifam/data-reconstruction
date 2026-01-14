@@ -58,6 +58,5 @@ src/ntp/
 └── ntp_experiment.py    # Multi-trial experiment and plotting
 ```
 
-## References
 
-Based on the theoretical analysis in "Data Reconstruction through the Lens of List Decoding" (Coming Soon).
+
