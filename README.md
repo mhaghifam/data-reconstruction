@@ -60,4 +60,4 @@ src/ntp/
 
 ## References
 
-Based on the theoretical analysis in "Data Reconstruction through the Lens of List Decoding" (Section 3).
+Based on the theoretical analysis in "Data Reconstruction through the Lens of List Decoding" (Coming Soon).
