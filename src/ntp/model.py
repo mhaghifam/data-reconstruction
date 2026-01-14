@@ -16,12 +16,11 @@ class SinusoidalPositionalEncoding(nn.Module):
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
 
-        # Register as a buffer (not a learnable parameter)
+       
         self.register_buffer('pe', pe.unsqueeze(0))
 
     def forward(self, x):
-        # x shape: (Batch, Seq_Len, Dim)
-        # Add positional encoding to the input
+        
         return x + self.pe[:, :x.size(1), :]
     
 
@@ -33,8 +32,8 @@ class TransformerNextToken(nn.Module):
         super().__init__()
         self.pad_value = pad_value
         self.embed_dim = embed_dim
-        # 1. Embeddings
-        # We need a standard embedding + a positional embedding (so it knows order)
+      
+        
         self.token_embedding = nn.Embedding(3, embed_dim) # 0, 1, pad
         self.pos_encoder = SinusoidalPositionalEncoding(embed_dim, max_len)
         self.layernorm = nn.LayerNorm(embed_dim)
@@ -62,11 +61,11 @@ class TransformerNextToken(nn.Module):
         x_in = x.clone()
         x_in[x_in == self.pad_value] = 2
 
-            # Embed and Scale
-            # Important: Multiply by sqrt(d_model) before adding PE (Standard practice)
+            
+           
         x_emb = self.token_embedding(x_in)
 
-            # Add Fixed Position Info
+           
         x_emb = self.pos_encoder(x_emb)
 
         x_emb = self.layernorm(x_emb)

@@ -118,19 +118,19 @@ def evaluate_last_position(model, dataloader, device):
 def train(model, train_loader, val_loader, num_epochs, lr, device):
     optimizer = torch.optim.Adam(
     model.parameters(),
-    lr=5e-4,          # Slightly lower peak to be safe without heavy regularization
-    weight_decay=0.0  # CRITICAL: Allow weights to grow to memorize data
+    lr=5e-4,          
+    weight_decay=0.0  
     )
 
-    # 2. Use a simpler scheduler (StepLR) or just constant LR with warmup
-    # This ensures we don't decay too fast. We want to grind the loss to zero.
+    
+    
     scheduler = torch.optim.lr_scheduler.StepLR(
         optimizer,
-        step_size=num_epochs * len(train_loader) // 2, # Drop LR only halfway through
+        step_size=num_epochs * len(train_loader) // 2, 
         gamma=0.1
     )
 
-    # Inside train_epoch loop, after optimizer.step():
+    
     max_val_acc = 0
     for epoch in range(num_epochs):
         train_loss, train_acc = train_epoch(model, train_loader, optimizer, device, scheduler)

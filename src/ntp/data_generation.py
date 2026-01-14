@@ -20,7 +20,7 @@ class DataGeneration:
         noise = torch.bernoulli(torch.full((n, self.dim), self.delta / 2))
         X_noised = torch.bitwise_xor(X_clean.long(), noise.long())
 
-        # Fix: low=2 ensures input_length >= 1
+    
         lengths = torch.randint(low=2, high=self.dim + 1, size=(n,))
         self.train_cluster_ids = cluster_ids
 
@@ -67,12 +67,12 @@ class NextTokenDataset(Dataset):
 
     def __getitem__(self, idx):
         seq = self.X[idx]
-        length = self.lengths[idx].item()  # <-- add .item() to convert to int
+        length = self.lengths[idx].item()  
         input_seq = seq[:-1]
         target_seq = seq[1:]
         input_length = length - 1
         attn_mask = torch.arange(self.dim - 1) < input_length
-        loss_mask = attn_mask.float()  # <-- convert to float explicitly
+        loss_mask = attn_mask.float() 
 
         return {
             'input': input_seq,
