@@ -1,6 +1,5 @@
 """
 experiment.py - Run multiple trials and plot learning vs memorization
-Library module; use run_ntp.py as the CLI entry point.
 """
 
 import numpy as np
@@ -15,18 +14,24 @@ from training import train_epoch, evaluate_last_position
 from attacker import attack_singletons
 
 
-def compute_median_reconstruction_accuracy(model, dg, singleton_clusters, num_queries=50, device='cpu'):
+def compute_median_reconstruction_accuracy(model, dg, X_train, singleton_clusters, num_queries=50, device='cpu'):
     """Run attack on singletons and return median reconstruction accuracy."""
     model.eval()
     accuracies = []
     
     with torch.no_grad():
         for cluster_id in singleton_clusters.tolist():
-            true_center = dg.centers[cluster_id]
+            train_idx = (dg.train_cluster_ids == cluster_id).nonzero(as_tuple=True)[0].item()
+            true_sample = X_train[train_idx]
+            
             correct = 0
             total = 0
             
             for prefix_len in range(1, dg.dim):
+                true_bit = true_sample[prefix_len].item()
+                if true_bit == -1:  # padding
+                    break
+                    
                 X, Y = dg.generate_fixed_length_samples(
                     n=num_queries,
                     cluster_idx=cluster_id,
@@ -36,7 +41,6 @@ def compute_median_reconstruction_accuracy(model, dg, singleton_clusters, num_qu
                 logits = model(input_seq)
                 avg_logit = logits[:, prefix_len - 1].mean().item()
                 
-                true_bit = true_center[prefix_len].item()
                 pred = 1 if avg_logit > 0 else 0
                 
                 if pred == true_bit:
@@ -49,7 +53,7 @@ def compute_median_reconstruction_accuracy(model, dg, singleton_clusters, num_qu
     return np.median(accuracies) if accuracies else 0.0
 
 
-def train_with_tracking(model, train_loader, val_loader, dg, singleton_clusters,
+def train_with_tracking(model, train_loader, val_loader, dg, X_train, singleton_clusters,
                         num_epochs, device, eval_every=50, num_attack_queries=50):
     """Train model while tracking val loss and reconstruction accuracy."""
     
@@ -72,7 +76,7 @@ def train_with_tracking(model, train_loader, val_loader, dg, singleton_clusters,
         if (epoch + 1) % eval_every == 0 or epoch == 0:
             val_loss, _ = evaluate_last_position(model, val_loader, device)
             median_acc = compute_median_reconstruction_accuracy(
-                model, dg, singleton_clusters,
+                model, dg, X_train, singleton_clusters,
                 num_queries=num_attack_queries, device=device
             )
             
@@ -130,6 +134,7 @@ def run_multiple_trials(num_trials, N, d, delta, n_train, n_val, batch_size,
             train_loader=train_loader,
             val_loader=val_loader,
             dg=dg,
+            X_train=X_train,
             singleton_clusters=singleton,
             num_epochs=num_epochs,
             device=device,
@@ -193,3 +198,4 @@ def plot_learning_vs_memorization(iterations, all_val_losses, all_median_accs, s
     
     plt.show()
     return fig
+
