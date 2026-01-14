@@ -1,5 +1,6 @@
 """
 experiment.py - Run multiple trials and plot learning vs memorization
+Library module; use run_ntp.py as the CLI entry point.
 """
 
 import numpy as np
@@ -69,7 +70,7 @@ def train_with_tracking(model, train_loader, val_loader, dg, singleton_clusters,
         
         # Evaluate at intervals
         if (epoch + 1) % eval_every == 0 or epoch == 0:
-            val_loss, _ = evaluate(model, val_loader, device)
+            val_loss, _ = evaluate_last_position(model, val_loader, device)
             median_acc = compute_median_reconstruction_accuracy(
                 model, dg, singleton_clusters,
                 num_queries=num_attack_queries, device=device
@@ -192,27 +193,3 @@ def plot_learning_vs_memorization(iterations, all_val_losses, all_median_accs, s
     
     plt.show()
     return fig
-
-
-if __name__ == "__main__":
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f"Using device: {device}")
-    
-    iterations, all_val_losses, all_median_accs = run_multiple_trials(
-        num_trials=5,
-        N=100,
-        d=400,
-        delta=0.1,
-        n_train=100,
-        n_val=1000,
-        batch_size=100,
-        num_epochs=2000,
-        device=device,
-        eval_every=100,
-        num_attack_queries=50
-    )
-    
-    plot_learning_vs_memorization(
-        iterations, all_val_losses, all_median_accs,
-        save_path='learning_vs_memorization.pdf'
-    )
