@@ -1,3 +1,6 @@
+This repo contains the empirical results presented in "Data Reconstruction through the Lens of List Decoding" (PDF Coming Soon).
+
+
 # Next Token Prediction
 
 This experiment demonstrates that learning implies memorization in the next token prediction setting. We show that a black-box attacker can reconstruct training data from singleton clusters by querying a trained model based on the following paper: [[https://arxiv.org/abs/2012.06421](https://arxiv.org/abs/2012.06421)]
