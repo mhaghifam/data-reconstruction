@@ -3,6 +3,7 @@ import torch
 import torch.distributions as distributions
 from torch.utils.data import Dataset, DataLoader
 import torch.nn as nn
+import math
 
 
 class SinusoidalPositionalEncoding(nn.Module):   
@@ -25,7 +26,7 @@ class SinusoidalPositionalEncoding(nn.Module):
     
 
 
-    import math
+    
 
 class TransformerNextToken(nn.Module):
     def __init__(self, embed_dim, hidden_dim, num_layers=2, num_heads=4, max_len=200, pad_value=-1):

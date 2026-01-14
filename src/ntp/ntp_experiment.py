@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 from data_generation import DataGeneration, NextTokenDataset
 from model import TransformerNextToken
-from training import train_epoch, evaluate
+from training import train_epoch, evaluate_last_position
 from attacker import attack_singletons
 
 

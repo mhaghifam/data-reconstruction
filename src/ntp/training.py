@@ -76,7 +76,7 @@ def evaluate(model, dataloader, device):
             correct = ((predictions == target_seq) * loss_mask).sum().item()
             total_correct += correct
             total_tokens += loss_mask.sum().item()
-            print(total_tokens)
+            
 
     avg_loss = total_loss / total_tokens
     accuracy = total_correct / total_tokens
@@ -85,24 +85,30 @@ def evaluate(model, dataloader, device):
 
 def evaluate_last_position(model, dataloader, device):
     model.eval()
+    total_loss = 0
     total_correct = 0
     total_samples = 0
+
+    loss_fn = nn.BCEWithLogitsLoss(reduction='none')
 
     with torch.no_grad():
         for batch in dataloader:
             input_seq = batch['input'].to(device)
             target_seq = batch['target'].to(device)
-            lengths = batch['length'].to(device)  # move to device
+            lengths = batch['length'].to(device)
 
             logits = model(input_seq)
 
             batch_size = input_seq.shape[0]
             last_positions = lengths - 1
 
-            # Ensure indices are on correct device
             batch_indices = torch.arange(batch_size, device=device)
             last_logits = logits[batch_indices, last_positions]
             last_targets = target_seq[batch_indices, last_positions]
+
+            # Compute loss at last position
+            loss = loss_fn(last_logits, last_targets.float())
+            total_loss += loss.sum().item()
 
             predictions = (last_logits > 0).long()
             correct = (predictions == last_targets).sum().item()
@@ -111,7 +117,8 @@ def evaluate_last_position(model, dataloader, device):
             total_samples += batch_size
 
     accuracy = total_correct / total_samples
-    return accuracy
+    avg_loss = total_loss / total_samples
+    return avg_loss, accuracy
 
 
 
@@ -134,7 +141,7 @@ def train(model, train_loader, val_loader, num_epochs, lr, device):
     max_val_acc = 0
     for epoch in range(num_epochs):
         train_loss, train_acc = train_epoch(model, train_loader, optimizer, device, scheduler)
-        val_acc = evaluate_last_position(model, val_loader, device)
+        val_loss, val_acc = evaluate_last_position(model, val_loader, device)
         if val_acc>=max_val_acc:
             max_val_acc = val_acc
 
@@ -142,7 +149,7 @@ def train(model, train_loader, val_loader, num_epochs, lr, device):
 
         print(f"Epoch {epoch+1}/{num_epochs}")
         print(f"  Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.4f}")
-        print(f"Val Acc:   {val_acc:.4f}")
+        print(f"  Vall Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}")
         print(f"max Val Acc:   {max_val_acc:.4f}")
 
     return model
