@@ -62,21 +62,49 @@ src/ntp/
 ```
 
 
-### Hypercube Cluster Labeling
+# Hypercube Cluster Labeling
 
-**Data Generation:**
-- N clusters, each defined by ~ρd fixed bit positions with random values
-- Training: n samples from uniform mixture over clusters
-- Singletons: clusters with exactly one training sample (~n/e for uniform mixture)
+This experiment demonstrates that learning implies memorization in the hypercube cluster labeling setting. We show that a black-box attacker can reconstruct training data from singleton clusters by querying a trained model based on the following paper: [https://arxiv.org/abs/2012.06421](https://arxiv.org/abs/2012.06421)
 
-**Attack:**
-- Attacker knows: fixed bit locations and values for each cluster
-- Goal: recover unfixed bits of singleton training examples
-- Method: For each unfixed bit i, generate probes with bit i=0 and i=1, compare model logits
+## Problem Setup
 
-**Key Insight:** 
-- Model achieves 100% train accuracy → must memorize singleton examples
-- Each unfixed bit contributes ~0.016 to logit
-- Need sufficient probes to overcome noise from other random bits
+We consider a multiclass classification task over binary hypercube clusters:
 
+1. **Data Generation**: 
+   - Sample N cluster centers: for each cluster j, independently mark each bit as "fixed" with probability ρ, then assign random values to fixed bits
+   - Each training sample: pick a random cluster j, copy fixed bits, fill unfixed bits uniformly at random
+   - Label is the cluster index j ∈ {1, ..., N}
+
+
+
+2. **Learning Objective**: Train a model to minimize cross-entropy loss for multiclass classification.
+
+## Attack Strategy
+
+The attacker has black-box query access to the trained model and knows the fixed bit locations/values for each cluster (but not the unfixed bits of the training sample).
+
+
+## Model Architecture
+
+We use a 3-layer MLP:
+
+| Component | Details |
+|-----------|---------|
+| Input | d-dimensional binary vector |
+| Hidden Layers | 2 layers, 1500 units each, ReLU |
+| Output | N-way softmax classification |
+
+Default hyperparameters: d=500, N=50, trained for 1000 epochs with Adam optimizer.
+
+
+
+## File Structure
+```
+src/clustring/
+├── data_generation.py       # data_generation class, HypercubeDataset
+├── model.py                 # MLP architecture
+├── train.py                 # Training and evaluation loops
+├── attack.py                # Attack functions
+└── clustring_expriment.py   # Multi-trial experiment and plotting
+```
 
