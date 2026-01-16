@@ -22,10 +22,6 @@ We consider a clustered binary sequence prediction task:
 
 The attacker has black-box query access to the trained model and knows which cluster to attack (but not the training sample itself).
 
-For each singleton cluster j:
-1. Query the model at every prefix length t ∈ {1, ..., d-1}
-2. Average predictions over multiple noisy queries from cluster j
-3. Reconstruct bits by thresholding: predict 1 if average logit > 0, else 0
 
 ## Model Architecture
 
