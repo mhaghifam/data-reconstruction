@@ -62,4 +62,21 @@ src/ntp/
 ```
 
 
+### Hypercube Cluster Labeling
+
+**Data Generation:**
+- N clusters, each defined by ~ρd fixed bit positions with random values
+- Training: n samples from uniform mixture over clusters
+- Singletons: clusters with exactly one training sample (~n/e for uniform mixture)
+
+**Attack:**
+- Attacker knows: fixed bit locations and values for each cluster
+- Goal: recover unfixed bits of singleton training examples
+- Method: For each unfixed bit i, generate probes with bit i=0 and i=1, compare model logits
+
+**Key Insight:** 
+- Model achieves 100% train accuracy → must memorize singleton examples
+- Each unfixed bit contributes ~0.016 to logit
+- Need sufficient probes to overcome noise from other random bits
+
 
