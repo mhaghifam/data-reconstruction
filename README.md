@@ -99,8 +99,6 @@ Default hyperparameters: d=500, N=50, trained for 1000 epochs with Adam optimize
 src/clustring/
 ├── data_generation.py       # data_generation class, HypercubeDataset
 ├── model.py                 # MLP architecture
-├── train.py                 # Training and evaluation loops
 ├── attack.py                # Attack functions
-└── clustring_expriment.py   # Multi-trial experiment and plotting
+└── clustring_expriment.py   # Training loop, multi-trial experiment, plotting
 ```
-
