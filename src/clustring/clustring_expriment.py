@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 
 from .data_generation import data_generation, HypercubeDataset
 from .model import MLP
-from .attack import attack_singletons_fast
+from .attack import attack_singletons
 
 
 def run_experiment(d, N, rho, epochs=1000, prob_num=500, bits_per_batch=50, device='cuda', checkpoints=None):
@@ -43,10 +43,10 @@ def run_experiment(d, N, rho, epochs=1000, prob_num=500, bits_per_batch=50, devi
                     total_loss += criterion(model(X_batch), y_batch).item()
             val_loss = total_loss / len(val_loader)
             
-            accuracies, median_acc = attack_singletons_fast(
+            accuracies, median_acc = attack_singletons(
                 model, data_gen, data_gen.singletons,
                 train_dataset.X, train_dataset.y,
-                prob_num=prob_num, bits_per_batch=bits_per_batch, device=device
+                prob_num=prob_num
             )
             
             results['epochs'].append(epoch)
