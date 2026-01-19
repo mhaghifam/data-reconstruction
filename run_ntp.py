@@ -21,9 +21,9 @@ if __name__ == "__main__":
         n_train=100,
         n_val=500,
         batch_size=100,
-        num_epochs=2000,
+        num_epochs=1500,
         device=device,
-        eval_every=200,
+        eval_every=150,
         num_attack_queries=100
     )
     

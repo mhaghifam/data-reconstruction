@@ -162,6 +162,8 @@ def plot_learning_vs_memorization(iterations, all_val_acces, all_median_accs, sa
     
     fig, ax1 = plt.subplots(figsize=(10, 6))
     
+    tick_labelsize = 14
+
     # Left axis: validation loss
     color1 = 'tab:blue'
     ax1.set_xlabel('Epoch', fontsize=16)
@@ -177,13 +179,14 @@ def plot_learning_vs_memorization(iterations, all_val_acces, all_median_accs, sa
     )
     ax1.fill_between(iterations, val_acc_mean - val_acc_std, val_acc_mean + val_acc_std,
                      color=color1, alpha=0.2)
-    ax1.tick_params(axis='y', labelcolor=color1)
+    ax1.tick_params(axis='x', labelsize=tick_labelsize)
+    ax1.tick_params(axis='y', labelcolor=color1, labelsize=tick_labelsize)
     ax1.set_ylim(0.5, 1)
     
     # Right axis: reconstruction accuracy
     ax2 = ax1.twinx()
     color2 = 'tab:red'
-    ax2.set_ylabel('Median Reconstruction Accuracy', color=color2, fontsize=16)
+    ax2.set_ylabel('Reconstruction Accuracy', color=color2, fontsize=16)
     line2, = ax2.plot(
         iterations,
         acc_mean,
@@ -195,7 +198,7 @@ def plot_learning_vs_memorization(iterations, all_val_acces, all_median_accs, sa
     )
     ax2.fill_between(iterations, acc_mean - acc_std, acc_mean + acc_std,
                      color=color2, alpha=0.2)
-    ax2.tick_params(axis='y', labelcolor=color2)
+    ax2.tick_params(axis='y', labelcolor=color2, labelsize=tick_labelsize)
     ax2.set_ylim(0.5, 1)
     
     # Random baseline

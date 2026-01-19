@@ -15,6 +15,8 @@ def plot_results(all_results, save_path=None):
 
     fig, ax1 = plt.subplots(figsize=(10, 6))
 
+    tick_labelsize = 14
+
     # Left axis: validation accuracy
     color1 = 'tab:blue'
     ax1.set_xlabel('Epoch', fontsize=16)
@@ -30,7 +32,8 @@ def plot_results(all_results, save_path=None):
     )
     ax1.fill_between(epochs, val_acc_mean - val_acc_std, val_acc_mean + val_acc_std,
                      color=color1, alpha=0.2)
-    ax1.tick_params(axis='y', labelcolor=color1)
+    ax1.tick_params(axis='x', labelsize=tick_labelsize)
+    ax1.tick_params(axis='y', labelcolor=color1, labelsize=tick_labelsize)
     ax1.set_ylim(bottom=0)
 
     # Right axis: reconstruction accuracy
@@ -48,7 +51,7 @@ def plot_results(all_results, save_path=None):
     )
     ax2.fill_between(epochs, median_acc_mean - median_acc_std, median_acc_mean + median_acc_std,
                      color=color2, alpha=0.2)
-    ax2.tick_params(axis='y', labelcolor=color2)
+    ax2.tick_params(axis='y', labelcolor=color2, labelsize=tick_labelsize)
     ax2.set_ylim(0, 1)
 
     lines = [line1, line2]
