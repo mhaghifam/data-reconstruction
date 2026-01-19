@@ -8,7 +8,7 @@ from .attack import attack_singletons
 
 
 def run_experiment(d, N, rho, epochs=1000, prob_num=500, bits_per_batch=50, device='cuda'):
-    report_freq = epochs//10 + 1
+    report_freq = epochs//20 + 1
     
     data_gen = data_generation(d)
     train_dataset = HypercubeDataset(data_gen, n=N, rho=rho, fixed_instance=False)
@@ -20,7 +20,7 @@ def run_experiment(d, N, rho, epochs=1000, prob_num=500, bits_per_batch=50, devi
     
     model = MLP(d=d, n_classes=N).to(device)
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=5e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     
     results = {'epochs': [], 'val_acc': [], 'median_acc': [], 'mean_acc': []}
     

@@ -17,8 +17,8 @@ def plot_results(all_results, save_path=None):
 
     # Left axis: validation accuracy
     color1 = 'tab:blue'
-    ax1.set_xlabel('Epoch', fontsize=12)
-    ax1.set_ylabel('Validation Accuracy', color=color1, fontsize=12)
+    ax1.set_xlabel('Epoch', fontsize=16)
+    ax1.set_ylabel('Validation Accuracy', color=color1, fontsize=16)
     line1, = ax1.plot(
         epochs,
         val_acc_mean,
@@ -26,7 +26,7 @@ def plot_results(all_results, save_path=None):
         linewidth=2,
         marker='*',
         markersize=8,
-        label='Val Acc'
+        label='Validation Accuracy'
     )
     ax1.fill_between(epochs, val_acc_mean - val_acc_std, val_acc_mean + val_acc_std,
                      color=color1, alpha=0.2)
@@ -36,7 +36,7 @@ def plot_results(all_results, save_path=None):
     # Right axis: reconstruction accuracy
     ax2 = ax1.twinx()
     color2 = 'tab:red'
-    ax2.set_ylabel('Median Reconstruction Accuracy', color=color2, fontsize=12)
+    ax2.set_ylabel('Reconstruction Accuracy', color=color2, fontsize=16)
     line2, = ax2.plot(
         epochs,
         median_acc_mean,
@@ -44,7 +44,7 @@ def plot_results(all_results, save_path=None):
         linewidth=2,
         marker='o',
         markersize=5,
-        label='Recon Acc'
+        label='Reconstruction Accuracy'
     )
     ax2.fill_between(epochs, median_acc_mean - median_acc_std, median_acc_mean + median_acc_std,
                      color=color2, alpha=0.2)
@@ -53,9 +53,9 @@ def plot_results(all_results, save_path=None):
 
     lines = [line1, line2]
     labels = [l.get_label() for l in lines]
-    ax1.legend(lines, labels, loc='lower right', fontsize=12)
+    ax1.legend(lines, labels, loc='lower right', fontsize=16)
 
-    plt.title(f'Learning vs Memorization (mean ± std over {num_trials} trials)', fontsize=14)
+    plt.title(f'Hypercube Clustring Task', fontsize=16)
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
 
