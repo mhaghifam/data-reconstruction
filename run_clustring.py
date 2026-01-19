@@ -39,4 +39,4 @@ if __name__ == '__main__':
         device=device
     )
     
-    plot_results(all_results, save_path='clustering.pdf')
+    plot_results(all_results, save_path='clustering2.pdf')

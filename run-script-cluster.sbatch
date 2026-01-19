@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=pytorch_job
-#SBATCH --output=cluster.log
+#SBATCH --output=cluster2.log
 #SBATCH --partition=gpu      
 #SBATCH --gpus=1
 #SBATCH --cpus-per-task=8

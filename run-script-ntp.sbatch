@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=pytorch_job
-#SBATCH --output=ntp.log
+#SBATCH --output=ntp2.log
 #SBATCH --partition=gpu      
 #SBATCH --gpus=1
 #SBATCH --cpus-per-task=8
