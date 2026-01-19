@@ -29,5 +29,5 @@ if __name__ == "__main__":
     
     plot_learning_vs_memorization(
         iterations, all_val_acces, all_median_accs,
-        save_path='ntp.pdf'
+        save_path='ntp2.pdf'
     )
