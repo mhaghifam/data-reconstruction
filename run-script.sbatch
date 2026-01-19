@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=pytorch_job
-#SBATCH --output=prompt-based-lora.log
+#SBATCH --output=ntp.log
 #SBATCH --partition=gpu      
 #SBATCH --gpus=1
 #SBATCH --cpus-per-task=8
@@ -13,4 +13,4 @@ source $HOME/nlphw/my_project.env
 
 # Run your PyTorch script
 #python train_model.py
-python prompt_based_lora.py
+python run_ntp.py
