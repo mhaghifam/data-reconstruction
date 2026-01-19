@@ -178,7 +178,7 @@ def plot_learning_vs_memorization(iterations, all_val_acces, all_median_accs, sa
     ax1.fill_between(iterations, val_acc_mean - val_acc_std, val_acc_mean + val_acc_std,
                      color=color1, alpha=0.2)
     ax1.tick_params(axis='y', labelcolor=color1)
-    ax1.set_ylim(bottom=0)
+    ax1.set_ylim(0.5, 1)
     
     # Right axis: reconstruction accuracy
     ax2 = ax1.twinx()
@@ -196,7 +196,7 @@ def plot_learning_vs_memorization(iterations, all_val_acces, all_median_accs, sa
     ax2.fill_between(iterations, acc_mean - acc_std, acc_mean + acc_std,
                      color=color2, alpha=0.2)
     ax2.tick_params(axis='y', labelcolor=color2)
-    ax2.set_ylim(0, 1)
+    ax2.set_ylim(0.5, 1)
     
     # Random baseline
     # ax2.axhline(y=0.5, color='gray', linestyle='--', alpha=0.5)
