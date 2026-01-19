@@ -21,10 +21,10 @@ if __name__ == "__main__":
         n_train=100,
         n_val=500,
         batch_size=100,
-        num_epochs=3000,
+        num_epochs=2000,
         device=device,
-        eval_every=300,
-        num_attack_queries=50
+        eval_every=200,
+        num_attack_queries=100
     )
     
     plot_learning_vs_memorization(
