@@ -125,7 +125,7 @@ def evaluate_last_position(model, dataloader, device):
 def train(model, train_loader, val_loader, num_epochs, lr, device):
     optimizer = torch.optim.Adam(
     model.parameters(),
-    lr=5e-4,          
+    lr=1e-3,          
     weight_decay=0.0  
     )
 

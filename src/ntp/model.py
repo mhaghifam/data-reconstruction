@@ -29,7 +29,7 @@ class SinusoidalPositionalEncoding(nn.Module):
     
 
 class TransformerNextToken(nn.Module):
-    def __init__(self, embed_dim, hidden_dim, num_layers=2, num_heads=4, max_len=200, pad_value=-1):
+    def __init__(self, embed_dim, hidden_dim, num_layers=1, num_heads=4, max_len=200, pad_value=-1):
         super().__init__()
         self.pad_value = pad_value
         self.embed_dim = embed_dim

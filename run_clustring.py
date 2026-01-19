@@ -15,7 +15,7 @@ if __name__ == '__main__':
     parser.add_argument('--prob_num', type=int, default=500, help='Number of probes per bit')
     parser.add_argument('--n_runs', type=int, default=5, help='Number of runs')
     parser.add_argument('--device', type=str, default='cuda', help='Device')
-    parser.add_argument('--save_path', type=str, default='figures/clustering_results.png', help='Save path')
+    parser.add_argument('--save_path', type=str, default='clustering_results.pdf', help='Save path')
     
     args = parser.parse_args()
     
