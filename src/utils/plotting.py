@@ -2,49 +2,63 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def plot_results(all_results, save_path=None):
-    epochs = all_results[0]['epochs']
-    
-    val_losses = np.array([r['val_loss'] for r in all_results])
+    epochs = np.array(all_results[0]['epochs'])
+
+    val_acces = np.array([r['val_acc'] for r in all_results])
     median_accs = np.array([r['median_acc'] for r in all_results])
-    mean_accs = np.array([r['mean_acc'] for r in all_results])
-    
-    val_loss_mean = val_losses.mean(axis=0)
-    val_loss_std = val_losses.std(axis=0)
-    median_acc_mean = median_accs.mean(axis=0)
-    median_acc_std = median_accs.std(axis=0)
-    mean_acc_mean = mean_accs.mean(axis=0)
-    mean_acc_std = mean_accs.std(axis=0)
-    
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
-    
-    # Plot 1: vs epoch
-    ax1.errorbar(epochs, val_loss_mean, yerr=val_loss_std, label='Val Loss', marker='o', capsize=3)
-    ax1.set_xlabel('Epoch')
-    ax1.set_ylabel('Validation Loss')
-    ax1.set_xscale('log')
-    ax1.legend(loc='upper right')
-    ax1.set_title('Validation Loss vs Epoch')
-    ax1.grid(True, alpha=0.3)
-    
-    ax1_twin = ax1.twinx()
-    ax1_twin.errorbar(epochs, median_acc_mean, yerr=median_acc_std, label='Median Recon Acc', 
-                       marker='s', color='orange', capsize=3)
-    ax1_twin.set_ylabel('Reconstruction Accuracy')
-    ax1_twin.legend(loc='right')
-    
-    # Plot 2: val loss vs accuracy
-    ax2.errorbar(val_loss_mean, median_acc_mean, xerr=val_loss_std, yerr=median_acc_std,
-                  label='Median Acc', marker='o', capsize=3)
-    ax2.errorbar(val_loss_mean, mean_acc_mean, xerr=val_loss_std, yerr=mean_acc_std,
-                  label='Mean Acc', marker='s', capsize=3)
-    ax2.set_xlabel('Validation Loss')
-    ax2.set_ylabel('Reconstruction Accuracy')
-    ax2.set_title('Reconstruction Accuracy vs Validation Loss')
-    ax2.legend()
-    ax2.grid(True, alpha=0.3)
-    
+
+    num_trials = val_acces.shape[0]
+    val_acc_mean = np.mean(val_acces, axis=0)
+    val_acc_std = np.std(val_acces, axis=0) / np.sqrt(num_trials)
+    median_acc_mean = np.mean(median_accs, axis=0)
+    median_acc_std = np.std(median_accs, axis=0) / np.sqrt(num_trials)
+
+    fig, ax1 = plt.subplots(figsize=(10, 6))
+
+    # Left axis: validation accuracy
+    color1 = 'tab:blue'
+    ax1.set_xlabel('Epoch', fontsize=12)
+    ax1.set_ylabel('Validation Accuracy', color=color1, fontsize=12)
+    line1, = ax1.plot(
+        epochs,
+        val_acc_mean,
+        color=color1,
+        linewidth=2,
+        marker='*',
+        markersize=8,
+        label='Val Acc'
+    )
+    ax1.fill_between(epochs, val_acc_mean - val_acc_std, val_acc_mean + val_acc_std,
+                     color=color1, alpha=0.2)
+    ax1.tick_params(axis='y', labelcolor=color1)
+    ax1.set_ylim(bottom=0)
+
+    # Right axis: reconstruction accuracy
+    ax2 = ax1.twinx()
+    color2 = 'tab:red'
+    ax2.set_ylabel('Median Reconstruction Accuracy', color=color2, fontsize=12)
+    line2, = ax2.plot(
+        epochs,
+        median_acc_mean,
+        color=color2,
+        linewidth=2,
+        marker='o',
+        markersize=5,
+        label='Recon Acc'
+    )
+    ax2.fill_between(epochs, median_acc_mean - median_acc_std, median_acc_mean + median_acc_std,
+                     color=color2, alpha=0.2)
+    ax2.tick_params(axis='y', labelcolor=color2)
+    ax2.set_ylim(0, 1)
+
+    lines = [line1, line2]
+    labels = [l.get_label() for l in lines]
+    ax1.legend(lines, labels, loc='lower right', fontsize=12)
+
+    plt.title(f'Learning vs Memorization (mean ± std over {num_trials} trials)', fontsize=14)
+    plt.grid(True, alpha=0.3)
     plt.tight_layout()
-    
+
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, bbox_inches='tight')
     plt.show()
