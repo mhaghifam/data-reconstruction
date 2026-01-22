@@ -1,4 +1,4 @@
-This repo contains the empirical results presented in "Data Reconstruction through the Lens of List Decoding" (PDF Coming Soon).
+This repo contains the empirical results presented in "Black-Box Data Reconstruction via List Decoding: The Necessity of List Memorization for Learning" (PDF Coming Soon).
 
 
 # Next Token Prediction
