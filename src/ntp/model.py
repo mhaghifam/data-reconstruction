@@ -47,7 +47,10 @@ class TransformerNextToken(nn.Module):
             batch_first=True,
             dropout=0
         )
-        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        # The nested-tensor fast path only changes outputs at padding positions and is not
+        # implemented on Apple MPS.
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers,
+                                                 enable_nested_tensor=False)
 
         # 3. Output Head
         self.output_head = nn.Linear(embed_dim, 1)

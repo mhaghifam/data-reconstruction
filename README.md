@@ -1,4 +1,4 @@
-# Black-Box Data Reconstruction via List Decoding
+# From Memorization to Extraction
 
 Code for the experiments in "From Memorization to Extraction: Provable Training-Data Recovery from Black-Box Models".
 
@@ -8,33 +8,39 @@ Code for the experiments in "From Memorization to Extraction: Provable Training-
 pip install -r requirements.txt
 ```
 
-Both experiments pick the device automatically (CUDA, Apple MPS, or CPU) and are run from the repository root.
+Scripts are run from the repository root and pick the device automatically (CUDA, Apple MPS, or CPU).
 
-## Next-Token Prediction
+## Running the experiments
+
+Each task has one script. Run with no arguments, it reproduces the figure in the paper. It trains a model several times from scratch and, at regular intervals during training, runs the black-box reconstruction attack on every singleton cluster. It writes:
+
+- `<out>.pdf` and `<out>.png`: validation accuracy and reconstruction accuracy vs. epoch, mean ± standard error over runs
+- `<out>_results.json`: the raw per-run numbers
+
+Every script accepts `--n_runs` (number of runs) and `--out` (output prefix); `--help` lists all options.
+
+### Next-token prediction
 
 ```bash
 python run_ntp.py
 ```
 
-Trains a one-layer causal Transformer on the clustered next-token prediction task (5 trials) and runs the black-box reconstruction attack on singleton clusters. Saves `ntp2.pdf`: validation accuracy and reconstruction accuracy vs. epoch.
+Model: one-layer causal Transformer. 5 runs of 1500 epochs, evaluated every 150 epochs. Output: `ntp.pdf`.
 
-## Hypercube Cluster Labeling
+### Hypercube cluster labeling
 
 ```bash
-python run_clustring.py --activation relu --hidden 1000 --center_input --lr 1e-3 --weight_decay 1e-3 \
-    --epochs 1000 --eval_every 50 --early_until 100 --out clustering_regularized
+python run_clustring.py
 ```
 
-Trains an MLP on the hypercube clustering task (20 runs; about 15 minutes on an Apple M3 Pro). At each evaluation it runs the black-box correlation attack on every singleton cluster. Saves:
-- `<out>.pdf` and `<out>.png`: validation accuracy and reconstruction accuracy vs. epoch, mean ± standard error over runs.
-- `<out>_results.json`: the raw per-run numbers.
-
-With no flags, `python run_clustring.py` trains a one-hidden-layer sigmoid MLP (500 units, Adam with lr 5e-4, 200 epochs). `python run_clustring.py --help` lists all options.
+Model: one-hidden-layer ReLU MLP with weight decay. 20 runs of 1000 epochs, evaluated every 50 epochs (every 10 during the first 100). Output: `clustering.pdf`. Takes about 15 minutes on an Apple M3 Pro.
 
 ## Layout
 
 ```
-src/ntp/        next-token prediction: data, model, training, attack, experiment
-src/clustring/  hypercube clustering: data, model, attack, experiment
-src/utils/      plotting
+run_ntp.py        next-token prediction experiment
+run_clustring.py  hypercube cluster labeling experiment
+src/ntp/          data, model, training, attack, experiment
+src/clustring/    data, model, attack, experiment
+src/utils/        plotting
 ```
