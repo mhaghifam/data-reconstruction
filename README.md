@@ -1,6 +1,6 @@
 # Black-Box Data Reconstruction via List Decoding
 
-Code for the experiments in "Black-Box Data Reconstruction via List Decoding: The Necessity of List Memorization for Learning".
+Code for the experiments in "From Memorization to Extraction: Provable Training-Data Recovery from Black-Box Models".
 
 ## Setup
 
