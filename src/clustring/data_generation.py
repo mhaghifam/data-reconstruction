@@ -20,6 +20,13 @@ class data_generation:
             m = int(self.fixed_loc[i].sum().item())
             self.fixed_vals.append(dist.sample(sample_shape=(m,)))
 
+    def sample_cluster(self, label, m, generator=None, device='cpu'):
+        """Draw m fresh points from P_{theta,label} with theta (the signatures) held fixed."""
+        X = (torch.rand(m, self.dim, generator=generator, device=device) < 0.5).float()
+        mask = (self.fixed_loc[label] == 1).to(device)
+        X[:, mask] = self.fixed_vals[label].to(device)
+        return X
+
     def generate_samples(self, n, rho=None, label=None, fixed_instance=False):
         if fixed_instance is False:
             self.generate_centers(rho, n)

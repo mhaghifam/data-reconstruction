@@ -1,104 +1,38 @@
 This repo contains the empirical results presented in "Black-Box Data Reconstruction via List Decoding: The Necessity of List Memorization for Learning" (PDF Coming Soon).
 
+## Setup
 
-# Next Token Prediction
+```bash
+pip install -r requirements.txt
+```
 
-This experiment demonstrates that learning implies memorization in the next token prediction setting. We show that a black-box attacker can reconstruct training data from singleton clusters by querying a trained model based on the following paper: [[https://arxiv.org/abs/2012.06421](https://arxiv.org/abs/2012.06421)]
+Both experiments pick the device automatically (CUDA, Apple MPS, or CPU) and are run from the repository root.
 
-## Problem Setup
-
-We consider a clustered binary sequence prediction task:
-
-1. **Data Generation**: 
-   - Sample N cluster centers uniformly from {0,1}^d
-   - Each training sample: pick a random cluster, apply BSC(δ/2) noise, and truncate to a random length T
-   - The model sees prefix Z = (z_1, ..., z_{T-1}) and predicts the next bit Y = z_T
-
-2. **Singleton Clusters**: When n = N training samples are drawn, roughly 1/e fraction of clusters contain exactly one sample. These are vulnerable to reconstruction.
-
-3. **Learning Objective**: Train a model to minimize cross-entropy loss for next token prediction.
-
-## Attack Strategy
-
-The attacker has black-box query access to the trained model and knows which cluster to attack (but not the training sample itself).
-
-
-## Model Architecture
-
-We use a causal Transformer decoder:
-
-| Component | Details |
-|-----------|---------|
-| Token Embedding | 3 tokens: {0, 1, pad} → embed_dim |
-| Positional Encoding | Sinusoidal |
-| Transformer Layers | 1 layer, 4 heads, causal masking |
-| Output Head | Linear → 1 (binary logit) |
-
-Default hyperparameters: embed_dim=256, hidden_dim=800, trained for 2000 epochs.
-
-## Output Plot
-
-The experiment produces a dual-axis plot showing **as the model learns to predict well, it simultaneously memorizes singleton training samples**, enabling reconstruction.
-
-## Usage
+## Next-Token Prediction
 
 ```bash
 python run_ntp.py
 ```
 
-## File Structure
+Trains a one-layer causal Transformer on the clustered next-token prediction task (5 trials) and runs the black-box reconstruction attack on singleton clusters. Saves `ntp2.pdf`: validation accuracy and reconstruction accuracy vs. epoch.
 
-```
-src/ntp/
-├── data_generation.py   # DataGeneration class, NextTokenDataset
-├── model.py             # TransformerNextToken architecture
-├── training.py          # Training and evaluation loops
-├── attacker.py          # Attack functions
-└── ntp_experiment.py    # Multi-trial experiment and plotting
+## Hypercube Cluster Labeling
+
+```bash
+python run_clustring.py --activation relu --hidden 1000 --center_input --lr 1e-3 --weight_decay 1e-3 \
+    --epochs 1000 --eval_every 50 --early_until 100 --out clustering_regularized
 ```
 
+Trains an MLP on the hypercube clustering task (20 runs; about 15 minutes on an Apple M3 Pro). At each evaluation it runs the black-box correlation attack on every singleton cluster. Saves:
+- `<out>.pdf` and `<out>.png`: validation accuracy and reconstruction accuracy vs. epoch, mean ± standard error over runs.
+- `<out>_results.json`: the raw per-run numbers.
 
-# Hypercube Cluster Labeling
+With no flags, `python run_clustring.py` trains a one-hidden-layer sigmoid MLP (500 units, Adam with lr 5e-4, 200 epochs). `python run_clustring.py --help` lists all options.
 
-This experiment demonstrates that learning implies memorization in the hypercube cluster labeling setting. We show that a black-box attacker can reconstruct training data from singleton clusters by querying a trained model based on the following paper: [https://arxiv.org/abs/2012.06421](https://arxiv.org/abs/2012.06421)
+## Layout
 
-## Problem Setup
-
-We consider a multiclass classification task over binary hypercube clusters:
-
-1. **Data Generation**: 
-   - Sample N cluster centers: for each cluster j, independently mark each bit as "fixed" with probability ρ, then assign random values to fixed bits
-   - Each training sample: pick a random cluster j, copy fixed bits, fill unfixed bits uniformly at random
-   - Label is the cluster index j ∈ {1, ..., N}
-
-
-
-2. **Learning Objective**: Train a model to minimize cross-entropy loss for multiclass classification.
-
-## Attack Strategy
-
-The attacker has black-box query access to the trained model and knows the fixed bit locations/values for each cluster (but not the unfixed bits of the training sample).
-
-
-## Model Architecture
-
-We use a 3-layer MLP:
-
-| Component | Details |
-|-----------|---------|
-| Input | d-dimensional binary vector |
-| Hidden Layers | 2 layers, 1500 units each, ReLU |
-| Output | N-way softmax classification |
-
-Default hyperparameters: d=500, N=50, trained for 1000 epochs with Adam optimizer.
-
-
-
-## File Structure
 ```
-src/clustring/
-├── data_generation.py       # data_generation class, HypercubeDataset
-├── model.py                 # MLP architecture
-├── attack.py                # Attack functions
-└── clustring_expriment.py   # Training loop, multi-trial experiment, plotting
+src/ntp/        next-token prediction: data, model, training, attack, experiment
+src/clustring/  hypercube clustering: data, model, attack, experiment
+src/utils/      plotting
 ```

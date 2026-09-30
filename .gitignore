@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.DS_Store
+
+# experiment outputs
+*.pdf
+*.png
+*_results.json
