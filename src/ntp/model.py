@@ -29,7 +29,8 @@ class SinusoidalPositionalEncoding(nn.Module):
     
 
 class TransformerNextToken(nn.Module):
-    def __init__(self, embed_dim, hidden_dim, num_layers=1, num_heads=4, max_len=200, pad_value=-1):
+    def __init__(self, embed_dim, hidden_dim, num_layers=1, num_heads=4, max_len=200, pad_value=-1,
+                 dropout=0.0):
         super().__init__()
         self.pad_value = pad_value
         self.embed_dim = embed_dim
@@ -45,7 +46,7 @@ class TransformerNextToken(nn.Module):
             nhead=num_heads,
             dim_feedforward=hidden_dim,
             batch_first=True,
-            dropout=0
+            dropout=dropout
         )
         # The nested-tensor fast path only changes outputs at padding positions and is not
         # implemented on Apple MPS.

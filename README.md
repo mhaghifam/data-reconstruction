@@ -25,7 +25,7 @@ Every script accepts `--n_runs` (number of runs) and `--out` (output prefix); `-
 python run_ntp.py
 ```
 
-Model: one-layer causal Transformer. 5 runs of 1500 epochs, evaluated every 150 epochs. Output: `ntp.pdf`.
+Model: two-layer causal Transformer with dropout, trained with batch size 20 and a cosine learning-rate schedule. Positions past the end of each training sequence are also trained, with uniformly random input bits and target 1/2. 5 runs of 1000 epochs, evaluated every 50 epochs. The attack's length threshold for each run is chosen on the other runs. Output: `ntp.pdf`.
 
 ### Hypercube cluster labeling
 

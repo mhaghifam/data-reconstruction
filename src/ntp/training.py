@@ -5,7 +5,13 @@ from torch.utils.data import Dataset, DataLoader
 import torch.nn as nn
 
 
-def train_epoch(model, dataloader, optimizer, device,scheduler=None):
+def train_epoch(model, dataloader, optimizer, device,scheduler=None, unknown_half=False, pad_value=-1):
+    """One pass over the training data.
+
+    unknown_half=True also trains the positions past each sequence's end, whose bits no training
+    sample reveals: the padding there is replaced by uniformly random bits and the target is 1/2.
+    Accuracy is always measured on the observed positions only.
+    """
     model.train()
     total_loss = 0
     total_correct = 0
@@ -17,16 +23,22 @@ def train_epoch(model, dataloader, optimizer, device,scheduler=None):
         lengths = batch['length'].to(device)
         loss_mask = batch['loss_mask'].to(device)
 
+        if unknown_half:
+            random_bits = torch.randint(0, 2, input_seq.shape, device=device)
+            input_seq = torch.where(input_seq == pad_value, random_bits, input_seq)
+            targets = torch.where(loss_mask > 0, target_seq.float(), torch.full_like(loss_mask, 0.5))
+            weights = torch.ones_like(loss_mask)
+        else:
+            targets = target_seq.float()
+            weights = loss_mask
+
         # Forward pass
         logits = model(input_seq, lengths)
 
-        # Compute loss only on valid positions
+        # Compute loss on the weighted positions (observed ones only, unless unknown_half)
         loss_fn = nn.BCEWithLogitsLoss(reduction='none')
-        loss_all = loss_fn(logits, target_seq.float())
-
-        # Mask out padding positions
-        loss_masked = loss_all * loss_mask
-        loss = loss_masked.sum() / loss_mask.sum()
+        loss_all = loss_fn(logits, targets)
+        loss = (loss_all * weights).sum() / weights.sum()
 
         # Backward pass
         optimizer.zero_grad()

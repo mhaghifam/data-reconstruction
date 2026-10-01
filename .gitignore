@@ -6,3 +6,6 @@ __pycache__/
 *.pdf
 *.png
 *_results.json
+
+# paper sources
+*.tex
